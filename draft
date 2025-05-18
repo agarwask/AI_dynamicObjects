@@ -24,10 +24,10 @@ public class TestNGTest_azureOpenAI {
      * @param args Unused. Arguments to the program.
      */
     public static void main(String[] args) {
-        String apiKey = "9HNUxrSHuTwbJBTcxLUMTfMI0D5KWbjiYyaz0erxOkeridlWqq3kJQQJ99BEACHYHv6XJ3w3AAAAACOGEoxL";
+        String apiKey = "9HNUxrSHuTwbJBTcxLUMTfMI0D5KWbjiYyaz0erxOkeridlWqq3k1111JQQJ99BEACHYHv6XJ3w3AAAAAC111111OGEoxL1111111";
         String endpoint = "https://zzaay-matiidsa-eastus2.cognitiveservices.azure.com/";
         String model = "gpt-4.1";
-        String deploymentName = "gpt-4.1-deploy";
+        String deploymentName = "gpt-4.1-deploy111111";
 
         OpenAIClient client = new OpenAIClientBuilder()
                 .credential(new AzureKeyCredential(apiKey))
