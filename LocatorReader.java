@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import utilities.models.KeyValueReader;
 
 public class LocatorReader {
 
@@ -46,9 +47,12 @@ public class LocatorReader {
                     case "linktext":
                         by = By.linkText(key);
                         break;
-//                    case "accessibility id":
-//                        by = By.accessibility id(key);
-//                        break;
+                    case "label":
+                        by = By.linkText(key);
+                        break;
+                    case "accessibility id":
+                        by = By.linkText(key);
+                        break;
                     default:
                         throw new IllegalArgumentException("Unsupported locator type: " + type);
                 }
@@ -59,10 +63,12 @@ public class LocatorReader {
 
             System.out.println(locatorMap);
             try (FileWriter writer = new FileWriter("myFile.txt")) {
-                writer.write(locatorMap.toString());
+                writer.write(locatorMap.size());
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+
 
         } catch(Exception e) {
             e.printStackTrace();
@@ -75,7 +81,7 @@ public class LocatorReader {
 
     public static By findLocatorByPartialName(String name) {
        for(Map.Entry<String, By> entry: locatorMap.entrySet()){
-           if(entry.getKey().toLowerCase().contains(name.toLowerCase())){
+           if(entry.getKey().toLowerCase().equals(name.toLowerCase())){
                return entry.getValue();
 
            }
@@ -85,5 +91,20 @@ public class LocatorReader {
     }
 
 
+    public static By findLocatorByPartialNamefromFile(String name) {
+
+//        KeyValueReader.FindobjectProperty(name);
+        return KeyValueReader.getValueIgnoreCase(name);
+
+
+
+        }
+
+
+
 
 }
+
+
+
+
