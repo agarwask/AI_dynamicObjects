@@ -1,0 +1,73 @@
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.*;
+
+/**
+ * Compares two JSON files containing arrays of locator objects (with locatorName, locatorType, locator)
+ * and prints out the differences between them: missing locators, and any value differences for corresponding locatorNames.
+ * Comparison is case-sensitive.
+ */
+public class LocatorJsonDifferenceFinder {
+
+    /**
+     * Finds and prints all differences between two arrays of locator JSON objects.
+     * Comparison is case-sensitive.
+     * @param json1 JSONArray from file 1
+     * @param json2 JSONArray from file 2
+     */
+    public static void findDifferences(JSONArray json1, JSONArray json2) {
+        // Create maps for fast lookup by locatorName
+        Map<String, JSONObject> map1 = new HashMap<>();
+        Map<String, JSONObject> map2 = new HashMap<>();
+
+        for (int i = 0; i < json1.length(); i++) {
+            JSONObject obj = json1.getJSONObject(i);
+            map1.put(obj.optString("locatorName"), obj);
+        }
+        for (int i = 0; i < json2.length(); i++) {
+            JSONObject obj = json2.getJSONObject(i);
+            map2.put(obj.optString("locatorName"), obj);
+        }
+
+        Set<String> allKeys = new HashSet<>();
+        allKeys.addAll(map1.keySet());
+        allKeys.addAll(map2.keySet());
+
+        for (String key : allKeys) {
+            JSONObject o1 = map1.get(key);
+            JSONObject o2 = map2.get(key);
+
+            if (o1 == null) {
+                System.out.println("Locator \"" + key + "\" is only in File 2: " + o2);
+            } else if (o2 == null) {
+                System.out.println("Locator \"" + key + "\" is only in File 1: " + o1);
+            } else {
+                boolean diffFound = false;
+                for (String field : Arrays.asList("locatorName", "locatorType", "locator")) {
+                    String v1 = o1.optString(field, "");
+                    String v2 = o2.optString(field, "");
+                    // Case-sensitive comparison
+                    if (!v1.equals(v2)) {
+                        if (!diffFound) {
+                            System.out.println("Difference in locator \"" + key + "\":");
+                            diffFound = true;
+                        }
+                        System.out.println("  Field '" + field + "' differs: File1=\"" + v1 + "\", File2=\"" + v2 + "\"");
+                    }
+                }
+            }
+        }
+    }
+
+    // Example usage
+    public static void main(String[] args) {
+        String jsonStr1 = "[{\"locatorName\":\"Search\",\"locatorType\":\"name\",\"locator\":\"search\"},{\"locatorName\":\"Search Button\",\"locatorType\":\"css\",\"locator\":\"button[type='button'][class*='search-button']\"},{\"locatorName\":\"Cart\",\"locatorType\":\"id\",\"locator\":\"cart\"},{\"locatorName\":\"Login\",\"locatorType\":\"linkText\",\"locator\":\"Login\"},{\"locatorName\":\"Register\",\"locatorType\":\"linkText\",\"locator\":\"Register\"},{\"locatorName\":\"Main Menu\",\"locatorType\":\"css\",\"locator\":\"ul.navbar-nav\"},{\"locatorName\":\"Wishlist\",\"locatorType\":\"css\",\"locator\":\"a[data-toggle='wishlist']\"}]";
+        String jsonStr2 = "[{\"locatorName\":\"Search\",\"locatorType\":\"name\",\"locator\":\"searchBox\"},{\"locatorName\":\"Search Button\",\"locatorType\":\"css\",\"locator\":\"button[type='button'][class*='search-btn']\"},{\"locatorName\":\"Cart\",\"locatorType\":\"ID\",\"locator\":\"cart\"},{\"locatorName\":\"Login\",\"locatorType\":\"linkText\",\"locator\":\"login\"},{\"locatorName\":\"Main Menu\",\"locatorType\":\"css\",\"locator\":\"ul.nav-main\"},{\"locatorName\":\"Wishlist\",\"locatorType\":\"css\",\"locator\":\"a[data-toggle='wishlist']\"},{\"locatorName\":\"Profile\",\"locatorType\":\"id\",\"locator\":\"profile\"}]";
+
+        JSONArray arr1 = new JSONArray(jsonStr1);
+        JSONArray arr2 = new JSONArray(jsonStr2);
+
+        findDifferences(arr1, arr2);
+    }
+}
